@@ -1,5 +1,5 @@
 <manifest android:exported="true" xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.el_principe_app_domi">
+  package="com.el_principe_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

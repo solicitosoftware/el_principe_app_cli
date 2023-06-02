@@ -1,5 +1,5 @@
 {
-  "name": "el_principe_app_domi",
+  "name": "el_principe_app",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -23,7 +23,6 @@
     "@react-navigation/bottom-tabs": "^6.2.0",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/stack": "^6.1.1",
-    "axios": "^1.4.0",
     "firebase": "^7.19.0",
     "formik": "^2.2.6",
     "moment": "^2.29.1",

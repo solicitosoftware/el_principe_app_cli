@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:989177657740:android:fb8a2f8e9eeacc7dbabea9",
         "android_client_info": {
-          "package_name": "com.el_principe_app_domi"
+          "package_name": "com.el_principe_app"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "989177657740-ttbavv36359vn50m00pvkv36291skoji.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.el_principe_app_domi",
+            "package_name": "com.el_principe_app",
             "certificate_hash": "8c3e10da97af347ea588f1a4c8e9c615c7b65abc"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "989177657740-vafdq6mrf1h8lrudkfupjtaju9du6b4b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.el_principe_app_domi",
+            "package_name": "com.el_principe_app",
             "certificate_hash": "b3852df6e5c56f3d004c7718c6ca87d8640d38f2"
           }
         },

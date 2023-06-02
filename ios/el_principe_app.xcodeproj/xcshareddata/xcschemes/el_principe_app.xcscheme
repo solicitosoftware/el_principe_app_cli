@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "el_principe_app_domi.app"
-               BlueprintName = "el_principe_app_domi"
-               ReferencedContainer = "container:el_principe_app_domi.xcodeproj">
+               BuildableName = "el_principe_app.app"
+               BlueprintName = "el_principe_app"
+               ReferencedContainer = "container:el_principe_app.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
                BuildableName = "el_principe_appTests.xctest"
                BlueprintName = "el_principe_appTests"
-               ReferencedContainer = "container:el_principe_app_domi.xcodeproj">
+               ReferencedContainer = "container:el_principe_app.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "el_principe_app_domi.app"
-            BlueprintName = "el_principe_app_domi"
-            ReferencedContainer = "container:el_principe_app_domi.xcodeproj">
+            BuildableName = "el_principe_app.app"
+            BlueprintName = "el_principe_app"
+            ReferencedContainer = "container:el_principe_app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "el_principe_app_domi.app"
-            BlueprintName = "el_principe_app_domi"
-            ReferencedContainer = "container:el_principe_app_domi.xcodeproj">
+            BuildableName = "el_principe_app.app"
+            BlueprintName = "el_principe_app"
+            ReferencedContainer = "container:el_principe_app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

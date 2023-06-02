@@ -1,4 +1,4 @@
-package com.el_principe_app_domi;
+package com.el_principe_app;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;
@@ -18,6 +18,6 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected String getMainComponentName() {
-    return "el_principe_app_domi";
+    return "el_principe_app";
   }
 }
