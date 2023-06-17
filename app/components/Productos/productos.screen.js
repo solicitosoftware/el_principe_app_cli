@@ -1,41 +1,40 @@
-import React, {useContext, useState, useEffect} from 'react';
-import {FirebaseContext} from '../../firebase';
+import React, { useContext, useState, useEffect, useCallback } from "react";
+import { FirebaseContext } from "../../firebase";
 import {
   View,
   StyleSheet,
   FlatList,
-  BackHandler,
   Modal,
   Text,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
-  Alert,
-} from 'react-native';
-import {useBackHandler} from '@react-native-community/hooks';
+} from "react-native";
 import {
   List,
   Avatar,
   TextInput,
   Button,
   ActivityIndicator,
-} from 'react-native-paper';
-import {Icon, Image, CheckBox} from 'react-native-elements';
-import {formatoPrecio} from '../../utils';
-import normalize from 'react-native-normalize';
-import Colors from '../../theme/colors';
-import {useDispatch, useCanasta} from '../Context/canastaProvider';
-import {types} from '../Context/canastaReducer';
+} from "react-native-paper";
+import { Icon, Image, CheckBox } from "react-native-elements";
+import { formatoPrecio } from "../../utils";
+import normalize from "react-native-normalize";
+import Colors from "../../theme/colors";
+import { useDispatch, useCanasta } from "../Context/canastaProvider";
+import { types } from "../Context/canastaReducer";
+import { useSelector } from "react-redux";
+import { initialProductos } from "../../redux/reducers/productosReducer";
 
-function Productos({route}) {
-  const {firebase} = useContext(FirebaseContext);
+function Productos({ route }) {
+  const { firebase } = useContext(FirebaseContext);
 
   const dispatch = useDispatch();
 
-  const [productos, setProductos] = useState([]);
+  const productos = useSelector(initialProductos);
 
   const [modal, setModal] = useState(false);
 
-  const [productoSelect, setProductoSelect] = useState([]);
+  const [productoSelect, setProductoSelect] = useState({});
 
   const [cantidad, setCantidad] = useState(1);
 
@@ -47,89 +46,58 @@ function Productos({route}) {
 
   const [banner, setBanner] = useState(null);
 
-  const canasta = useCanasta();
-
-  useBackHandler(() => {
-    BackHandler.exitApp();
-  });
-
-  const backAction = () => {
-    if (canasta.length > 0) {
-      Alert.alert(
-        'Canasta',
-        'Al salir se borraran los productos, desea salir?',
-        [
-          {
-            text: 'No',
-            onPress: () => null,
-            style: 'cancel',
-          },
-          {text: 'Si', onPress: () => BackHandler.exitApp()},
-        ],
-      );
-      return true;
-    }
-  };
+  const bannerImagen = useCallback(() => {
+    return (
+      <Image
+        source={{ uri: banner }}
+        style={{ height: 150 }}
+        resizeMode="stretch"
+      />
+    );
+  }, [banner]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () =>
-      BackHandler.removeEventListener('hardwareBackPress', backAction);
-  }, [canasta]);
-
-  useEffect(() => {
-    const obtenerProductos = () => {
-      firebase.db
-        .collection('productos')
-        .where('estado', '==', true)
-        .orderBy('orden', 'asc')
-        .onSnapshot(manejarSnapshotProductos);
-    };
-
     const obtenerBanner = async () => {
       const url = await firebase.storage
-        .ref('banners/banner.jpg')
+        .ref("banners/banner.jpg")
         .getDownloadURL();
       setBanner(url);
     };
 
-    //Metodo para obtener los productos activos y el banner
-    obtenerProductos();
+    //Metodo para obtener el banner
     obtenerBanner();
   }, []);
 
-  function manejarSnapshotProductos(values) {
-    const productos = values.docs.map((doc) => {
-      return {
-        id: doc.id,
-        ...doc.data(),
-      };
-    });
-    setProductos(productos);
-  }
+  const ordenarProductos = useCallback((values) => {
+    return values.sort((a, b) => a.orden - b.orden);
+  }, []);
+
+  useEffect(() => {
+    setModal(Object.values(productoSelect).length > 0 ? true : false);
+  }, [productoSelect]);
 
   //Metodo para cargar todos los productos
-  const cargarProductos = ({item, index}) => {
-    const {nombre, imagen, precio} = item;
+  const cargarProductos = ({ item, index }) => {
+    const { nombre, imagen, precio } = item;
     return (
       <List.Item
         key={`Pedido_${index}`}
         title={nombre.toUpperCase()}
-        titleStyle={{fontSize: normalize(20)}}
+        titleStyle={{ fontSize: normalize(20) }}
         description={`Precio ${formatoPrecio(precio)}`}
-        descriptionStyle={{fontSize: normalize(18)}}
+        descriptionStyle={{ fontSize: normalize(18) }}
         left={() => (
           <View style={styles.imagen}>
-            <Avatar.Image size={50} source={{uri: imagen}} />
+            <Avatar.Image size={50} source={{ uri: imagen }} />
           </View>
         )}
         right={() => (
           <View
             style={{
               width: normalize(40),
-              justifyContent: 'center',
-            }}>
+              justifyContent: "center",
+            }}
+          >
             <TextInput.Icon
               name={() => (
                 <Icon
@@ -137,18 +105,16 @@ function Productos({route}) {
                   size={normalize(30)}
                   name="plus"
                   type="evilicon"
-                  onPress={async () => {
-                    await setProductoSelect(item);
-                    setModal(true);
+                  onPress={() => {
+                    setProductoSelect(item);
                   }}
                 />
               )}
             />
           </View>
         )}
-        onPress={async () => {
-          await setProductoSelect(item);
-          setModal(true);
+        onPress={() => {
+          setProductoSelect(item);
         }}
       />
     );
@@ -156,7 +122,7 @@ function Productos({route}) {
 
   //Metodo para agregar productoa a la canasta
   const agregarProducto = (params) => {
-    let actual = {...params};
+    let actual = { ...params };
     actual.cantidad = cantidad;
     actual.salsas = {};
     if (actual.categoria.salsas) {
@@ -166,7 +132,7 @@ function Productos({route}) {
         pina: pina,
       };
     }
-    dispatch({type: types.add, data: {...actual}});
+    dispatch({ type: types.add, data: { ...actual } });
     limpiarDatos();
   };
 
@@ -174,8 +140,9 @@ function Productos({route}) {
     setBbq(false);
     setPina(false);
     setRosa(false);
-    setCantidad(1);
     setModal(false);
+    setCantidad(1);
+    setProductoSelect({});
   };
 
   //Metodo para cargar las salsas al detalle del producto
@@ -185,9 +152,10 @@ function Productos({route}) {
         <Text
           style={{
             fontSize: normalize(13),
-            marginTop: normalize(10, 'height'),
+            marginTop: normalize(10, "height"),
             marginLeft: normalize(15),
-          }}>
+          }}
+        >
           Seleccione sus salsas:
         </Text>
         <CheckBox
@@ -198,7 +166,7 @@ function Productos({route}) {
               type="material"
               color="#A93226"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           uncheckedIcon={
@@ -207,7 +175,7 @@ function Productos({route}) {
               type="material"
               color="grey"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           checked={bbq}
@@ -221,7 +189,7 @@ function Productos({route}) {
               type="material"
               color="#FE73B9"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           uncheckedIcon={
@@ -230,7 +198,7 @@ function Productos({route}) {
               type="material"
               color="grey"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           checked={rosa}
@@ -244,7 +212,7 @@ function Productos({route}) {
               type="material"
               color="#FFC300"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           uncheckedIcon={
@@ -253,7 +221,7 @@ function Productos({route}) {
               type="material"
               color="grey"
               size={normalize(20)}
-              iconStyle={{marginHorizontal: normalize(10)}}
+              iconStyle={{ marginHorizontal: normalize(10) }}
             />
           }
           checked={pina}
@@ -265,54 +233,59 @@ function Productos({route}) {
 
   //Metodo para mostrar el detalle del producto seleccionado
   const detalleProducto = () => {
-    const {descripcion, imagen, precio, nombre, categoria} = productoSelect;
+    const { descripcion, imagen, precio, nombre, categoria } = productoSelect;
     let costo = cantidad * precio;
     return (
       <Modal
         animationType="slide"
         visible={modal}
         transparent={true}
-        onRequestClose={limpiarDatos}>
+        onRequestClose={limpiarDatos}
+      >
         <TouchableWithoutFeedback onPress={limpiarDatos} accessible={false}>
           <View style={styles.containerModal}>
             <View style={styles.modal}>
               <View
                 style={{
-                  alignItems: 'center',
-                  marginBottom: normalize(15, 'height'),
-                }}>
+                  alignItems: "center",
+                  marginBottom: normalize(15, "height"),
+                }}
+              >
                 <Text
                   style={{
-                    textAlign: 'center',
+                    textAlign: "center",
                     fontSize: normalize(16),
-                    marginTop: normalize(5, 'height'),
-                  }}>
+                    marginTop: normalize(5, "height"),
+                  }}
+                >
                   {nombre && nombre.toUpperCase()}
                 </Text>
                 {imagen && (
                   <Image
-                    placeholderStyle={{backgroundColor: 'white'}}
+                    placeholderStyle={{ backgroundColor: "white" }}
                     style={styles.imageModal}
                     resizeMode="contain"
-                    source={{uri: imagen}}
+                    source={{ uri: imagen }}
                   />
                 )}
                 <Text
                   style={{
-                    textAlign: 'center',
+                    textAlign: "center",
                     fontSize: normalize(16),
-                    marginTop: normalize(5, 'height'),
-                  }}>
+                    marginTop: normalize(5, "height"),
+                  }}
+                >
                   {descripcion}
                 </Text>
               </View>
               {categoria?.salsas && salsas()}
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  marginVertical: normalize(15, 'height'),
-                }}>
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  marginVertical: normalize(15, "height"),
+                }}
+              >
                 <View style={styles.cantidad}>
                   <Icon
                     color={Colors.error}
@@ -341,7 +314,8 @@ function Productos({route}) {
               </View>
             </View>
             <TouchableNativeFeedback
-              onPress={() => agregarProducto(productoSelect)}>
+              onPress={() => agregarProducto(productoSelect)}
+            >
               <Button
                 style={styles.button}
                 theme={{
@@ -349,7 +323,8 @@ function Productos({route}) {
                     primary: Colors.button,
                   },
                 }}
-                mode="contained">
+                mode="contained"
+              >
                 {`Agregar ${formatoPrecio(costo)}`}
               </Button>
             </TouchableNativeFeedback>
@@ -360,23 +335,13 @@ function Productos({route}) {
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={{ flex: 1, justifyContent: "center" }}>
       {productos.length > 0 ? (
         <FlatList
-          data={productos}
+          data={ordenarProductos([...productos])}
           renderItem={cargarProductos}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={() => (
-            <View>
-              {banner && (
-                <Image
-                  source={{uri: banner}}
-                  style={{height: 150}}
-                  resizeMode="stretch"
-                />
-              )}
-            </View>
-          )}
+          ListHeaderComponent={() => <View>{bannerImagen()}</View>}
         />
       ) : (
         <ActivityIndicator size={normalize(50)} color={Colors.primary} />
@@ -388,39 +353,38 @@ function Productos({route}) {
 
 const styles = StyleSheet.create({
   imagen: {
-    justifyContent: 'center',
+    justifyContent: "center",
     marginHorizontal: 5,
   },
   containerModal: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(218,218,218, 0.9)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(218,218,218, 0.9)",
   },
   modal: {
-    backgroundColor: 'rgba(255,255,255, 1)',
+    backgroundColor: "rgba(255,255,255, 1)",
     marginHorizontal: normalize(5),
     borderTopLeftRadius: normalize(30),
     borderTopRightRadius: normalize(30),
-    paddingTop: normalize(20, 'height'),
+    paddingTop: normalize(20, "height"),
   },
   textCantidad: {
     fontSize: normalize(25),
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginHorizontal: normalize(20),
   },
   cantidad: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: normalize(2, 'height'),
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: normalize(2, "height"),
   },
   imageModal: {
     width: normalize(160),
-    height: normalize(130, 'height'),
+    height: normalize(130, "height"),
     borderRadius: normalize(20),
   },
   button: {
-    paddingVertical: normalize(5, 'height'),
-    marginBottom: normalize(10, 'height'),
+    paddingVertical: normalize(10, "height"),
   },
 });
 

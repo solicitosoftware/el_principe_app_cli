@@ -1,12 +1,24 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import usuariosReducer from "./reducers/usuariosReducer";
+import clientesReducer from "./reducers/clientesReducer";
+import loginReducer from "./reducers/loginReducer";
+import productosReducer from "./reducers/productosReducer";
+import barriosReducer from "./reducers/barriosReducer";
+import municipiosReducer from "./reducers/municipiosReducer";
+import pedidosReducer from "./reducers/pedidosReducer";
+import notificacionReducer from "./reducers/notificacionReducer";
 
 const combinedReducer = combineReducers({
-  usuarios: usuariosReducer,
+  clientes: clientesReducer,
+  login: loginReducer,
+  productos: productosReducer,
+  barrios: barriosReducer,
+  municipios: municipiosReducer,
+  pedidos: pedidosReducer,
+  notificacion: notificacionReducer,
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === "usuarios/logout") {
+  if (action.type === "login/logout") {
     state = undefined;
   }
   return combinedReducer(state, action);
@@ -14,4 +26,8 @@ const rootReducer = (state, action) => {
 
 export default configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
