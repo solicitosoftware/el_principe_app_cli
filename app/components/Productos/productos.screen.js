@@ -36,6 +36,8 @@ function Productos({ route }) {
 
   const [productoSelect, setProductoSelect] = useState({});
 
+  const [data, setData] = useState([]);
+
   const [cantidad, setCantidad] = useState(1);
 
   const [bbq, setBbq] = useState(false);
@@ -50,7 +52,7 @@ function Productos({ route }) {
     return (
       <Image
         source={{ uri: banner }}
-        style={{ height: 150 }}
+        style={{ height: 200 }}
         resizeMode="stretch"
       />
     );
@@ -67,6 +69,27 @@ function Productos({ route }) {
     //Metodo para obtener el banner
     obtenerBanner();
   }, []);
+
+  const cargarProductosCaja = useCallback(() => {
+    if (productos.length === 0) {
+      dispatch(obtenerProductoAsync());
+    } else {
+      const newData = productos?.reduce((result, item) => {
+        if (item?.disponible?.app) {
+          result.push(item);
+        }
+        if (!item.disponible) {
+          result.push(item);
+        }
+        return result;
+      }, []);
+      setData(newData);
+    }
+  }, [dispatch, productos]);
+
+  useEffect(() => {
+    cargarProductosCaja();
+  }, [cargarProductosCaja]);
 
   const ordenarProductos = useCallback((values) => {
     return values.sort((a, b) => a.orden - b.orden);
@@ -336,9 +359,9 @@ function Productos({ route }) {
 
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
-      {productos.length > 0 ? (
+      {data.length > 0 ? (
         <FlatList
-          data={ordenarProductos([...productos])}
+          data={ordenarProductos([...data])}
           renderItem={cargarProductos}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={() => <View>{bannerImagen()}</View>}

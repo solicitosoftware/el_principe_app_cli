@@ -1,4 +1,4 @@
-import React, { useState, useRef, memo } from "react";
+import React, { useState, useRef, memo, useEffect } from "react";
 import Colors from "../../theme/colors";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -22,6 +22,7 @@ import {
   estadoProceso,
   obtenerClienteAsync,
 } from "../../redux/reducers/clientesReducer";
+import SplashScreen from "react-native-splash-screen";
 
 function Login() {
   const dispatch = useDispatch();
@@ -61,6 +62,11 @@ function Login() {
         .max(6, "El código debe contener maximo 6 caracteres"),
     }),
   });
+
+  useEffect(() => {
+    //Cierra el splash para mostrar la pantalla inicial
+    SplashScreen.hide();
+  }, []);
 
   //Metodo submit que toma los datos del formulario de formik
   const handleSubmit = () => {
