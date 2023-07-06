@@ -52,7 +52,7 @@ export function nullOrEmpty(myStr) {
 //Transforma las fechas retornadas desde firebase
 export function formatearTimestamp(time) {
   try {
-    let fecha = new Date((time.seconds || time._seconds) * 1000);
+    let fecha = new Date((time?.seconds || time?._seconds) * 1000);
     return fecha;
   } catch (error) {
     console.error(error);

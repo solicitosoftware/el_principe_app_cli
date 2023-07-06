@@ -21,7 +21,6 @@ import { capitalize } from "../../utils";
 import normalize from "react-native-normalize";
 import Colors from "../../theme/colors";
 import { launchImageLibrary } from "react-native-image-picker";
-import auth from "@react-native-firebase/auth";
 import {
   actualizarClienteAsync,
   crearClienteAsync,
@@ -33,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const DeviceScreen = Dimensions.get("screen");
 
-function Home({ route }) {
+function Home() {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();

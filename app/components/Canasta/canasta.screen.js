@@ -62,7 +62,7 @@ import {
   updateNotify,
 } from "../../redux/reducers/notificacionReducer";
 
-function Canasta({ route }) {
+function Canasta() {
   const { firebase } = useContext(FirebaseContext);
 
   const dispatch = useDispatch();
@@ -513,6 +513,7 @@ function Canasta({ route }) {
           return true;
         }
         dispatchContext({ type: types.clear });
+        navigation.navigate("notificacion");
         limpiarDatos();
       } else {
         toastRef.current.show(

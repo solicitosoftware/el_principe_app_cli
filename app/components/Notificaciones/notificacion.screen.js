@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Text,
   View,
@@ -13,7 +13,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Card, Button, Avatar, Divider, TextInput } from "react-native-paper";
 import Toast, { DURATION } from "react-native-easy-toast";
-import { FirebaseContext } from "../../firebase";
 import normalize from "react-native-normalize";
 import Colors from "../../theme/colors";
 import { capitalize, formatoPrecio } from "../../utils";
@@ -26,7 +25,7 @@ import {
 } from "../../redux/reducers/pedidosReducer";
 import { deleteCambios } from "../../redux/reducers/notificacionReducer";
 
-function Notificacion({ route }) {
+function Notificacion() {
   const dispatch = useDispatch();
 
   const toastRef = useRef();
@@ -87,7 +86,7 @@ function Notificacion({ route }) {
     const { estado, entrega } = item;
     if (estado === "Cancelado") {
       return styles.cancelado;
-    } else if (estado.includes("Pendiente")) {
+    } else if (estado?.includes("Pendiente")) {
       return styles.pendiente;
     } else if (entrega && estado === "Entregado") {
       return styles.entregado;
@@ -104,9 +103,9 @@ function Notificacion({ route }) {
       return { id: "C", nombre: "Cancelado" };
     } else if (entrega && estado === "Entregado") {
       return { id: "E", nombre: "Entregado" };
-    } else if (espera && estado.includes("Pendiente")) {
+    } else if (espera && estado?.includes("Pendiente")) {
       return { id: "P", nombre: "Aprobado" };
-    } else if (estado.includes("Pendiente")) {
+    } else if (estado?.includes("Pendiente")) {
       return { id: "P", nombre: "Pend. Aprobación" };
     } else if (estado === "Impreso" || estado === "Reimpreso") {
       return { id: "A", nombre: "Preparación" };

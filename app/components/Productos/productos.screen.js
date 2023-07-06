@@ -20,10 +20,13 @@ import { Icon, Image, CheckBox } from "react-native-elements";
 import { formatoPrecio } from "../../utils";
 import normalize from "react-native-normalize";
 import Colors from "../../theme/colors";
-import { useDispatch, useCanasta } from "../Context/canastaProvider";
+import { useDispatch } from "../Context/canastaProvider";
 import { types } from "../Context/canastaReducer";
 import { useSelector } from "react-redux";
-import { initialProductos } from "../../redux/reducers/productosReducer";
+import {
+  initialProductos,
+  obtenerProductoAsync,
+} from "../../redux/reducers/productosReducer";
 
 function Productos({ route }) {
   const { firebase } = useContext(FirebaseContext);
@@ -52,7 +55,7 @@ function Productos({ route }) {
     return (
       <Image
         source={{ uri: banner }}
-        style={{ height: 200 }}
+        style={{ height: 190 }}
         resizeMode="stretch"
       />
     );
