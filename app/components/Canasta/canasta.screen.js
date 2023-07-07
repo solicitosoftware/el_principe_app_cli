@@ -25,6 +25,7 @@ import {
   Modal,
   Alert,
   Linking,
+  Platform,
 } from "react-native";
 import {
   List,
@@ -44,7 +45,7 @@ import normalize from "react-native-normalize";
 import Colors from "../../theme/colors";
 import { types } from "../Context/canastaReducer";
 import SplashScreen from "react-native-splash-screen";
-import { checkVersion } from "react-native-check-version";
+import checkVersion from "react-native-store-version";
 import "moment/locale/es";
 import { initialClientes } from "../../redux/reducers/clientesReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,6 +62,8 @@ import {
   setCambios,
   updateNotify,
 } from "../../redux/reducers/notificacionReducer";
+import { REACT_APP_IOS_LINK, REACT_APP_ANDROID_LINK } from "@env";
+import DeviceInfo from "react-native-device-info";
 
 function Canasta() {
   const { firebase } = useContext(FirebaseContext);
@@ -194,10 +197,14 @@ function Canasta() {
   }, []);
 
   const validarVersion = async () => {
-    const version = await checkVersion();
+    const check = await checkVersion({
+      version: DeviceInfo.getVersion(),
+      iosStoreURL: REACT_APP_IOS_LINK,
+      androidStoreURL: REACT_APP_ANDROID_LINK,
+      country: "co",
+    });
 
-    const actualizarApp = () => {
-      let link = version.url;
+    const actualizarApp = (link) => {
       Linking.openURL(link)
         .then((supported) => {
           if (!supported) {
@@ -211,14 +218,19 @@ function Canasta() {
         .catch((err) => console.error(err));
     };
 
-    if (version.needsUpdate) {
+    if (check.result === "new") {
       Alert.alert(
         "Actualización",
-        `Es necesario actualizar la aplicación en su última versión ${version.version}`,
+        `Es necesario actualizar la aplicación en su última versión ${check.remote}`,
         [
           {
             text: "Ir",
-            onPress: () => actualizarApp(),
+            onPress: () =>
+              actualizarApp(
+                Platform.OS === "ios"
+                  ? REACT_APP_IOS_LINK
+                  : REACT_APP_ANDROID_LINK
+              ),
           },
         ]
       );
@@ -623,7 +635,7 @@ function Canasta() {
           });
         }}
       >
-        {direccion && !nullOrEmpty(direccion) && (
+        {!nullOrEmpty(direccion) && (
           <List.Item
             title={`${capitalize(direccion)} ${barrio && barrio.nombre}`}
             titleStyle={{ fontSize: normalize(16) }}
@@ -644,7 +656,7 @@ function Canasta() {
             onPress={() => cargarDireccion("")}
           />
         )}
-        {direccion2 && !nullOrEmpty(direccion2) && (
+        {!nullOrEmpty(direccion2) && (
           <List.Item
             title={`${capitalize(direccion2)} ${barrio2 && barrio2.nombre}`}
             titleStyle={{ fontSize: normalize(16) }}
@@ -665,7 +677,7 @@ function Canasta() {
             onPress={() => cargarDireccion("2")}
           />
         )}
-        {direccion3 && !nullOrEmpty(direccion3) && (
+        {!nullOrEmpty(direccion3) && (
           <List.Item
             title={`${capitalize(direccion3)} ${barrio3 && barrio3.nombre}`}
             titleStyle={{ fontSize: normalize(16) }}
@@ -686,7 +698,7 @@ function Canasta() {
             onPress={() => cargarDireccion("3")}
           />
         )}
-        {direccion4 && !nullOrEmpty(direccion4) && (
+        {!nullOrEmpty(direccion4) && (
           <List.Item
             title={`${capitalize(direccion4)} ${barrio4 && barrio4.nombre}`}
             titleStyle={{ fontSize: normalize(16) }}

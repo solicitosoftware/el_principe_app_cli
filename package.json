@@ -30,7 +30,7 @@
     "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "0.63.5",
-    "react-native-check-version": "^1.0.20",
+    "react-native-store-version": "^1.4.1",
     "react-native-device-info": "^10.6.0",
     "react-native-dotenv": "^3.4.8",
     "react-native-easy-toast": "^2.0.0",

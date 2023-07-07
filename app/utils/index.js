@@ -43,7 +43,7 @@ export function capitalize(val) {
 }
 
 export function nullOrEmpty(myStr) {
-  if (myStr === null || myStr.trim() === "") {
+  if (myStr === null || myStr === undefined || myStr.trim() === "") {
     return true;
   }
   return false;
